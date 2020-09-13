@@ -31,8 +31,8 @@ struct ast
 struct stringList *newStringList(char *, struct stringList *);
 
 struct ast *newAST(struct ast *, struct ast *);
-struct ast *newClass(char *, struct stringList *);
-struct ast *newPackage(char *, struct stringList *);
+struct ast *newClass(struct stringList *, char *);
+struct ast *newPackage(struct stringList *, char *);
 
 // To open the output and call a recursive function
 void callMakeOutput(struct ast *head);

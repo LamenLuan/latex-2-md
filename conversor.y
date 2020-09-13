@@ -24,15 +24,15 @@ configuration: documentClass usePackage { $$ = newAST($1, $2); }
 ;
 
 documentClass: CLASS '[' stringList ']' '{' STRING '}' {
-        $$ = newClass($6, $3);
+        $$ = newClass($3, $6);
     }
-    | CLASS '{' STRING '}' { $$ = newClass($3, NULL); }
+    | CLASS '{' STRING '}' { $$ = newClass(NULL, $3); }
 ;
 
 usePackage: PACKAGE '[' stringList ']' '{' STRING '}' {
-    $$ = newPackage($6, $3);
+    $$ = newPackage($3, $6);
 }
-    | PACKAGE '{' STRING '}' { $$ = newPackage($3, NULL); }
+    | PACKAGE '{' STRING '}' { $$ = newPackage(NULL, $3); }
 ;
 
 stringList: STRING ',' stringList { $$ = newStringList($1, $3); }

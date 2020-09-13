@@ -43,7 +43,7 @@ struct ast *newAST(struct ast *left, struct ast *right)
     return p;
 }
 
-struct ast *newClass(char *name, struct stringList *list)
+struct ast *newClass(struct stringList *list, char *name)
 {
     struct ast *p = newAST(NULL, NULL);
 
@@ -53,7 +53,7 @@ struct ast *newClass(char *name, struct stringList *list)
     return p;
 }
 
-struct ast *newPackage(char *name, struct stringList *list)
+struct ast *newPackage(struct stringList *list, char *name)
 {
     struct ast *p = newAST(NULL, NULL);
 
