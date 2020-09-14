@@ -3,7 +3,7 @@
     #include "conversor.h"
     #include "conversor.tab.h"
 %}
-
+STR [a-zA-Z0-9]+
 %%
 "[" |
 "]" |
@@ -13,8 +13,11 @@
 
 "\\documentclass" { return CLASS; }
 "\\usepackage" { return PACKAGE; }
+"\\title" { return TITLE; }
+"\\author" { return AUTHOR; }
 
-[a-zA-Z0-9]+ { yylval.str = strdup(yytext); return STRING; }
+{STR} { yylval.str = strdup(yytext); return STRING; }
+({STR}" ")+{STR} { yylval.str = strdup(yytext); return NAME; }
 
 \n {}
 "//".*

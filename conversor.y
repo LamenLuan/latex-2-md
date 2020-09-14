@@ -7,15 +7,15 @@
     struct ast *a;
 }
 
-%token <str> STRING
-%token CLASS PACKAGE
+%token <str> STRING NAME
+%token CLASS PACKAGE TITLE AUTHOR
 
-%type <a> configuration documentClass usePackage
+%type <a> configuration identification documentClass usePackage title author
 %type <list> stringList
 
 %%
-latexDocument: configuration {
-    callMakeOutput($1);
+latexDocument: configuration identification {
+    callMakeOutput( newAST($1, $2) );
 }
 ;
 
@@ -23,16 +23,28 @@ configuration: documentClass usePackage { $$ = newAST($1, $2); }
     | documentClass
 ;
 
+identification: title author { $$ = newAST($1, $2); }
+    | title
+;
+
+title: TITLE '{' NAME '}' { $$ = newElement(NULL, $3, Ttitle); }
+    | TITLE '{' STRING '}' { $$ = newElement(NULL, $3, Ttitle); }
+;
+
+author: AUTHOR '{' NAME '}' { $$ = newElement(NULL, $3, Tauthor); }
+    | AUTHOR '{' STRING '}' { $$ = newElement(NULL, $3, Tauthor); }
+;
+
 documentClass: CLASS '[' stringList ']' '{' STRING '}' {
-        $$ = newClass($3, $6);
+        $$ = newElement($3, $6, Tclass);
     }
-    | CLASS '{' STRING '}' { $$ = newClass(NULL, $3); }
+    | CLASS '{' STRING '}' { $$ = newElement(NULL, $3, Tclass); }
 ;
 
 usePackage: PACKAGE '[' stringList ']' '{' STRING '}' {
-    $$ = newPackage($3, $6);
+    $$ = newElement($3, $6, Tpackage);
 }
-    | PACKAGE '{' STRING '}' { $$ = newPackage(NULL, $3); }
+    | PACKAGE '{' STRING '}' { $$ = newElement(NULL, $3, Tpackage); }
 ;
 
 stringList: STRING ',' stringList { $$ = newStringList($1, $3); }
