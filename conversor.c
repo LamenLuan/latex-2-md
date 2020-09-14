@@ -87,15 +87,17 @@ void makeOutput(struct ast *head, FILE *output)
             struct stringList *list = head->list;
         
             fprintf(output, "Class: %s", list->string);
-            if(list = list->next)
+            if(list->next)
             {
                 fprintf(output, "[");
                 while (list = list->next)
                 {
-                    fprintf(output, "%s, ", list->string);
+                    fprintf(output, "%s", list->string);
+                    if(list->next) fprintf(output, ", ");
                 }
                 fprintf(output, "]");
             }
+            fprintf(output, "  \n");
         } break;
 
         case Tpackage:
@@ -103,15 +105,17 @@ void makeOutput(struct ast *head, FILE *output)
             struct stringList *list = head->list;
             
             fprintf(output, "Package: %s", list->string);
-            if(list = list->next)
+            if(list->next)
             {
                 fprintf(output, "[");
                 while (list = list->next)
                 {
-                    fprintf(output, "%s, ", list->string);
+                    fprintf(output, "%s", list->string);
+                    if(list->next) fprintf(output, ", ");
                 }
                 fprintf(output, "]");
             }
+            fprintf(output, "  \n***  \n");
         } break;
 
         default: break;

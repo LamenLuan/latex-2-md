@@ -14,7 +14,7 @@
 "\\documentclass" { return CLASS; }
 "\\usepackage" { return PACKAGE; }
 
-[A-Za-z0-9]+ { yylval.str = yytext; return STRING; }
+[a-zA-Z0-9]+ { yylval.str = strdup(yytext); return STRING; }
 
 \n {}
 "//".*
