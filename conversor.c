@@ -43,22 +43,15 @@ struct ast *newAST(struct ast *left, struct ast *right)
     return p;
 }
 
-struct ast *newClass(struct stringList *list, char *name)
+struct ast *newElement
+(
+    struct stringList *list, char *name, TnodeType type
+)
 {
     struct ast *p = newAST(NULL, NULL);
 
     p->list = newStringList(name, list);
-    p->nodeType = Tclass;
-
-    return p;
-}
-
-struct ast *newPackage(struct stringList *list, char *name)
-{
-    struct ast *p = newAST(NULL, NULL);
-
-    p->list = newStringList(name, list);
-    p->nodeType = Tpackage;
+    p->nodeType = type;
 
     return p;
 }
@@ -117,6 +110,14 @@ void makeOutput(struct ast *head, FILE *output)
             }
             fprintf(output, "  \n***  \n");
         } break;
+
+        case Ttitle:
+            fprintf(output, "# %s  \n", head->list->string);
+            break;
+
+        case Tauthor:
+            fprintf(output, "### %s  \n", head->list->string);
+            break;
 
         default: break;
     }

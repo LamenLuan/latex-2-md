@@ -14,12 +14,14 @@ struct stringList
     struct stringList *next;
 };
 
-enum nodeType
+typedef enum nodeType
 {
     Tast,
     Tclass,
-    Tpackage
-};
+    Tpackage,
+    Ttitle,
+    Tauthor
+}TnodeType;
 
 struct ast
 {
@@ -30,9 +32,11 @@ struct ast
 
 struct stringList *newStringList(char *, struct stringList *);
 
+// Non leaf nodes
 struct ast *newAST(struct ast *, struct ast *);
-struct ast *newClass(struct stringList *, char *);
-struct ast *newPackage(struct stringList *, char *);
+
+// Leaf nodes
+struct ast *newElement(struct stringList *, char *, TnodeType);
 
 // To open the output and call a recursive function
 void callMakeOutput(struct ast *head);
