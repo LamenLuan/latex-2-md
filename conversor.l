@@ -3,7 +3,7 @@
     #include "conversor.h"
     #include "conversor.tab.h"
 %}
-STR [a-zA-Z0-9]+
+ALPHANUM [a-zA-Z0-9]+
 %%
 "[" |
 "]" |
@@ -15,9 +15,15 @@ STR [a-zA-Z0-9]+
 "\\usepackage" { return PACKAGE; }
 "\\title" { return TITLE; }
 "\\author" { return AUTHOR; }
+"\\begin{document}" { return START; }
+"\\maketitle" { return MAKETITLE; }
+"\\end{document}" { return END; }
+"\\chapter" { return CHAPTER; }
 
-{STR} { yylval.str = strdup(yytext); return STRING; }
-({STR}" ")+{STR} { yylval.str = strdup(yytext); return NAME; }
+({ALPHANUM}" ")*{ALPHANUM} {
+    yylval.c = strdup(yytext); return TEXT;
+}
+{ALPHANUM} { return WORD; }
 
 \n {}
 "//".*

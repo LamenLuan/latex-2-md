@@ -2,20 +2,21 @@
     #include "conversor.h"
 %}
 %union {
-    char *str;
-    struct stringList *list;
+    char *c;
+    struct wordList *l;
     struct ast *a;
 }
 
-%token <str> STRING NAME
-%token CLASS PACKAGE TITLE AUTHOR
+%token <c> TEXT WORD
+%token CLASS PACKAGE TITLE AUTHOR START MAKETITLE END CHAPTER
 
-%type <a> configuration identification documentClass usePackage title author
-%type <list> stringList
+%type <a> configuration identification documentClass usePackage title 
+author main bodyList chapter
+%type <l> wordList
 
 %%
-latexDocument: configuration identification {
-    callMakeOutput( newAST($1, $2) );
+latexDocument: configuration identification main {
+    callMakeOutput( newAST( $1, newAST($2, $3) ) );
 }
 ;
 
@@ -27,26 +28,32 @@ identification: title author { $$ = newAST($1, $2); }
     | title
 ;
 
-title: TITLE '{' NAME '}' { $$ = newElement(NULL, $3, Ttitle); }
-    | TITLE '{' STRING '}' { $$ = newElement(NULL, $3, Ttitle); }
+title: TITLE '{' TEXT '}' { $$ = newElement(NULL, $3, Ttitle); }
 ;
 
-author: AUTHOR '{' NAME '}' { $$ = newElement(NULL, $3, Tauthor); }
-    | AUTHOR '{' STRING '}' { $$ = newElement(NULL, $3, Tauthor); }
+author: AUTHOR '{' TEXT '}' { $$ = newElement(NULL, $3, Tauthor); }
 ;
 
-documentClass: CLASS '[' stringList ']' '{' STRING '}' {
+documentClass: CLASS '[' wordList ']' '{' WORD '}' {
         $$ = newElement($3, $6, Tclass);
     }
-    | CLASS '{' STRING '}' { $$ = newElement(NULL, $3, Tclass); }
+    | CLASS '{' WORD '}' { $$ = newElement(NULL, $3, Tclass); }
 ;
 
-usePackage: PACKAGE '[' stringList ']' '{' STRING '}' {
+usePackage: PACKAGE '[' wordList ']' '{' WORD '}' {
     $$ = newElement($3, $6, Tpackage);
 }
-    | PACKAGE '{' STRING '}' { $$ = newElement(NULL, $3, Tpackage); }
+    | PACKAGE '{' WORD '}' { $$ = newElement(NULL, $3, Tpackage); }
 ;
 
-stringList: STRING ',' stringList { $$ = newStringList($1, $3); }
-    | STRING { $$ = newStringList($1, NULL); }
+wordList: WORD ',' wordList { $$ = newWordList($1, $3); }
+    | WORD { $$ = newWordList($1, NULL); }
 ;
+
+main: START MAKETITLE bodyList END { $$ = $3; }
+;
+
+bodyList: chapter
+;
+
+chapter: CHAPTER '{' TEXT '}' { $$ = newElement(NULL, $3, Tchapter); }

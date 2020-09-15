@@ -10,9 +10,9 @@ void yyerror(char *s, ...)
     fprintf(stderr, "\n");
 }
 
-struct stringList *newStringList(char *str, struct stringList *next)
+struct wordList *newWordList(char *word, struct wordList *next)
 {
-    struct stringList *p = malloc( sizeof(struct stringList) );
+    struct wordList *p = malloc( sizeof(struct wordList) );
 
     if(!p)
     {
@@ -20,7 +20,7 @@ struct stringList *newStringList(char *str, struct stringList *next)
         exit(0);
     }
 
-    p->string = strdup(str);
+    p->word = strdup(word);
     p->next = next;
 
     return p;
@@ -45,12 +45,12 @@ struct ast *newAST(struct ast *left, struct ast *right)
 
 struct ast *newElement
 (
-    struct stringList *list, char *name, TnodeType type
+    struct wordList *list, char *name, TnodeType type
 )
 {
     struct ast *p = newAST(NULL, NULL);
 
-    p->list = newStringList(name, list);
+    p->list = newWordList(name, list);
     p->nodeType = type;
 
     return p;
@@ -77,15 +77,15 @@ void makeOutput(struct ast *head, FILE *output)
 
         case Tclass:
         {
-            struct stringList *list = head->list;
+            struct wordList *list = head->list;
         
-            fprintf(output, "Class: %s", list->string);
+            fprintf(output, "Class: %s", list->word);
             if(list->next)
             {
                 fprintf(output, "[");
                 while (list = list->next)
                 {
-                    fprintf(output, "%s", list->string);
+                    fprintf(output, "%s", list->word);
                     if(list->next) fprintf(output, ", ");
                 }
                 fprintf(output, "]");
@@ -95,15 +95,15 @@ void makeOutput(struct ast *head, FILE *output)
 
         case Tpackage:
         {
-            struct stringList *list = head->list;
+            struct wordList *list = head->list;
             
-            fprintf(output, "Package: %s", list->string);
+            fprintf(output, "Package: %s", list->word);
             if(list->next)
             {
                 fprintf(output, "[");
                 while (list = list->next)
                 {
-                    fprintf(output, "%s", list->string);
+                    fprintf(output, "%s", list->word);
                     if(list->next) fprintf(output, ", ");
                 }
                 fprintf(output, "]");
@@ -112,11 +112,15 @@ void makeOutput(struct ast *head, FILE *output)
         } break;
 
         case Ttitle:
-            fprintf(output, "# %s  \n", head->list->string);
+            fprintf(output, "# %s  \n", head->list->word);
             break;
 
         case Tauthor:
-            fprintf(output, "### %s  \n", head->list->string);
+            fprintf(output, "### %s  \n", head->list->word);
+            break;
+
+        case Tchapter:
+            fprintf(output, "#### %s  \n", head->list->word);
             break;
 
         default: break;

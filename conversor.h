@@ -8,10 +8,10 @@ extern int yylineno;
 extern FILE *yyin;
 void yyerror(char *s, ...);
 
-struct stringList
+struct wordList
 {
-    char *string;
-    struct stringList *next;
+    char *word;
+    struct wordList *next;
 };
 
 typedef enum nodeType
@@ -20,23 +20,24 @@ typedef enum nodeType
     Tclass,
     Tpackage,
     Ttitle,
-    Tauthor
+    Tauthor,
+    Tchapter
 }TnodeType;
 
 struct ast
 {
     enum nodeType nodeType;
-    struct stringList *list;
+    struct wordList *list;
     struct ast *right, *left;
 };
 
-struct stringList *newStringList(char *, struct stringList *);
+struct wordList *newWordList(char *, struct wordList *);
 
 // Non leaf nodes
 struct ast *newAST(struct ast *, struct ast *);
 
 // Leaf nodes
-struct ast *newElement(struct stringList *, char *, TnodeType);
+struct ast *newElement(struct wordList *, char *, TnodeType);
 
 // To open the output and call a recursive function
 void callMakeOutput(struct ast *head);
