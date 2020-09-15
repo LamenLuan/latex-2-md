@@ -7,7 +7,7 @@
     struct ast *a;
 }
 
-%token <c> TEXT WORD
+%token <c> TEXT
 %token CLASS PACKAGE TITLE AUTHOR START MAKETITLE END CHAPTER
 
 %type <a> configuration identification documentClass usePackage title 
@@ -34,20 +34,20 @@ title: TITLE '{' TEXT '}' { $$ = newElement(NULL, $3, Ttitle); }
 author: AUTHOR '{' TEXT '}' { $$ = newElement(NULL, $3, Tauthor); }
 ;
 
-documentClass: CLASS '[' wordList ']' '{' WORD '}' {
+documentClass: CLASS '[' wordList ']' '{' TEXT '}' {
         $$ = newElement($3, $6, Tclass);
     }
-    | CLASS '{' WORD '}' { $$ = newElement(NULL, $3, Tclass); }
+    | CLASS '{' TEXT '}' { $$ = newElement(NULL, $3, Tclass); }
 ;
 
-usePackage: PACKAGE '[' wordList ']' '{' WORD '}' {
+usePackage: PACKAGE '[' wordList ']' '{' TEXT '}' {
     $$ = newElement($3, $6, Tpackage);
 }
-    | PACKAGE '{' WORD '}' { $$ = newElement(NULL, $3, Tpackage); }
+    | PACKAGE '{' TEXT '}' { $$ = newElement(NULL, $3, Tpackage); }
 ;
 
-wordList: WORD ',' wordList { $$ = newWordList($1, $3); }
-    | WORD { $$ = newWordList($1, NULL); }
+wordList: TEXT ',' wordList { $$ = newWordList($1, $3); }
+    | TEXT { $$ = newWordList($1, NULL); }
 ;
 
 main: START MAKETITLE bodyList END { $$ = $3; }

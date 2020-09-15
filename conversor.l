@@ -23,7 +23,6 @@ ALPHANUM [a-zA-Z0-9]+
 ({ALPHANUM}" ")*{ALPHANUM} {
     yylval.c = strdup(yytext); return TEXT;
 }
-{ALPHANUM} { return WORD; }
 
 \n {}
 "//".*
