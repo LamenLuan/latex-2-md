@@ -123,6 +123,10 @@ void makeOutput(struct ast *head, FILE *output)
             fprintf(output, "#### %s  \n", head->list->word);
             break;
 
+        case Tparagraph:
+            fprintf(output, "%s  \n", head->list->word);
+            break;
+
         default: break;
     }
 }

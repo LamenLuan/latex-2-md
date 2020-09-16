@@ -8,10 +8,10 @@
 }
 
 %token <c> TEXT
-%token CLASS PACKAGE TITLE AUTHOR START MAKETITLE END CHAPTER
+%token CLASS PACKAGE TITLE AUTHOR START MAKETITLE END CHAPTER PARAGRAPH
 
 %type <a> configuration identification documentClass usePackage title 
-author main bodyList chapter
+author main bodyList chapter body text
 %type <l> wordList
 
 %%
@@ -56,4 +56,15 @@ main: START MAKETITLE bodyList END { $$ = $3; }
 bodyList: chapter
 ;
 
-chapter: CHAPTER '{' TEXT '}' { $$ = newElement(NULL, $3, Tchapter); }
+chapter: CHAPTER '{' TEXT '}' body chapter {
+       $$ = newAST( newElement(NULL, $3, Tchapter), newAST($5, $6) );
+    }
+    | CHAPTER '{' TEXT '}' { $$ = newElement(NULL, $3, Tchapter); }
+;
+
+body: text
+    | text body { $$ = newAST($1, $2); }
+;
+
+text: PARAGRAPH '{' TEXT '}' { $$ = newElement(NULL, $3, Tparagraph); }
+;

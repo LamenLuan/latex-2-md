@@ -19,6 +19,7 @@ ALPHANUM [a-zA-Z0-9]+
 "\\maketitle" { return MAKETITLE; }
 "\\end{document}" { return END; }
 "\\chapter" { return CHAPTER; }
+"\\paragraph" { return PARAGRAPH; }
 
 ({ALPHANUM}" ")*{ALPHANUM} {
     yylval.c = strdup(yytext); return TEXT;

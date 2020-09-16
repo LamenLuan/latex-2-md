@@ -21,7 +21,8 @@ typedef enum nodeType
     Tpackage,
     Ttitle,
     Tauthor,
-    Tchapter
+    Tchapter,
+    Tparagraph
 }TnodeType;
 
 struct ast
