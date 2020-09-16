@@ -20,6 +20,9 @@ ALPHANUM [a-zA-Z0-9]+
 "\\end{document}" { return END; }
 "\\chapter" { return CHAPTER; }
 "\\paragraph" { return PARAGRAPH; }
+"\\bf" { return BOLD; }
+"\\underline" { return UNDERLINE; }
+"\\it" { return ITALIC; }
 
 ({ALPHANUM}" ")*{ALPHANUM} {
     yylval.c = strdup(yytext); return TEXT;

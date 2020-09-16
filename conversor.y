@@ -8,10 +8,11 @@
 }
 
 %token <c> TEXT
-%token CLASS PACKAGE TITLE AUTHOR START MAKETITLE END CHAPTER PARAGRAPH
+%token CLASS PACKAGE TITLE AUTHOR START MAKETITLE END CHAPTER
+PARAGRAPH BOLD UNDERLINE ITALIC
 
 %type <a> configuration identification documentClass usePackage title 
-author main bodyList chapter body text
+author main bodyList chapter body text stylizedText
 %type <l> wordList
 
 %%
@@ -64,7 +65,13 @@ chapter: CHAPTER '{' TEXT '}' body chapter {
 
 body: text
     | text body { $$ = newAST($1, $2); }
+    | stylizedText body { $$ = newAST($1, $2); }
 ;
 
 text: PARAGRAPH '{' TEXT '}' { $$ = newElement(NULL, $3, Tparagraph); }
+;
+
+stylizedText: BOLD '{' TEXT '}' { $$ = newElement(NULL, $3, Tbold); }
+    | UNDERLINE '{' TEXT '}' { $$ = newElement(NULL, $3, Tunderline); }
+    | ITALIC '{' TEXT '}' { $$ = newElement(NULL, $3, Titalic); }
 ;

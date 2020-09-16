@@ -90,14 +90,13 @@ void makeOutput(struct ast *head, FILE *output)
                 }
                 fprintf(output, "]");
             }
-            fprintf(output, "  \n");
         } break;
 
         case Tpackage:
         {
             struct wordList *list = head->list;
             
-            fprintf(output, "Package: %s", list->word);
+            fprintf(output, "  \nPackage: %s", list->word);
             if(list->next)
             {
                 fprintf(output, "[");
@@ -108,23 +107,35 @@ void makeOutput(struct ast *head, FILE *output)
                 }
                 fprintf(output, "]");
             }
-            fprintf(output, "  \n***  \n");
+            fprintf(output, "  \n***");
         } break;
 
         case Ttitle:
-            fprintf(output, "# %s  \n", head->list->word);
+            fprintf(output, "  \n# %s", head->list->word);
             break;
 
         case Tauthor:
-            fprintf(output, "### %s  \n", head->list->word);
+            fprintf(output, "  \n### %s", head->list->word);
             break;
 
         case Tchapter:
-            fprintf(output, "#### %s  \n", head->list->word);
+            fprintf(output, "  \n#### %s", head->list->word);
             break;
 
         case Tparagraph:
-            fprintf(output, "%s  \n", head->list->word);
+            fprintf(output, "  \n%s", head->list->word);
+            break;
+
+        case Tbold:
+            fprintf(output, " **%s**", head->list->word);
+            break;
+
+        case Tunderline:
+            fprintf(output, " <u>%s</u>", head->list->word);
+            break;
+
+        case Titalic:
+            fprintf(output, " *%s*", head->list->word);
             break;
 
         default: break;

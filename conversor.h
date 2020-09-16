@@ -22,7 +22,10 @@ typedef enum nodeType
     Ttitle,
     Tauthor,
     Tchapter,
-    Tparagraph
+    Tparagraph,
+    Tbold,
+    Tunderline,
+    Titalic
 }TnodeType;
 
 struct ast
