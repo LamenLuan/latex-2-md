@@ -7,13 +7,14 @@
     struct ast *a;
 }
 
-%token <c> TEXT
+%token <c> WORD
 %token CLASS PACKAGE TITLE AUTHOR START MAKETITLE END CHAPTER
 PARAGRAPH BOLD UNDERLINE ITALIC
 
 %type <a> configuration identification documentClass usePackage title 
 author main bodyList chapter body text stylizedText
 %type <l> wordList
+%type <c> wordConcat
 
 %%
 latexDocument: configuration identification main {
@@ -29,26 +30,26 @@ identification: title author { $$ = newAST($1, $2); }
     | title
 ;
 
-title: TITLE '{' TEXT '}' { $$ = newElement(NULL, $3, Ttitle); }
+title: TITLE '{' wordConcat '}' { $$ = newElement(NULL, $3, Ttitle); }
 ;
 
-author: AUTHOR '{' TEXT '}' { $$ = newElement(NULL, $3, Tauthor); }
+author: AUTHOR '{' wordConcat '}' { $$ = newElement(NULL, $3, Tauthor); }
 ;
 
-documentClass: CLASS '[' wordList ']' '{' TEXT '}' {
+documentClass: CLASS '[' wordList ']' '{' WORD '}' {
         $$ = newElement($3, $6, Tclass);
     }
-    | CLASS '{' TEXT '}' { $$ = newElement(NULL, $3, Tclass); }
+    | CLASS '{' WORD '}' { $$ = newElement(NULL, $3, Tclass); }
 ;
 
-usePackage: PACKAGE '[' wordList ']' '{' TEXT '}' {
+usePackage: PACKAGE '[' wordList ']' '{' WORD '}' {
     $$ = newElement($3, $6, Tpackage);
 }
-    | PACKAGE '{' TEXT '}' { $$ = newElement(NULL, $3, Tpackage); }
+    | PACKAGE '{' WORD '}' { $$ = newElement(NULL, $3, Tpackage); }
 ;
 
-wordList: TEXT ',' wordList { $$ = newWordList($1, $3); }
-    | TEXT { $$ = newWordList($1, NULL); }
+wordList: WORD ',' wordList { $$ = newWordList($1, $3); }
+    | WORD { $$ = newWordList($1, NULL); }
 ;
 
 main: START MAKETITLE bodyList END { $$ = $3; }
@@ -57,10 +58,10 @@ main: START MAKETITLE bodyList END { $$ = $3; }
 bodyList: chapter
 ;
 
-chapter: CHAPTER '{' TEXT '}' body chapter {
+chapter: CHAPTER '{' wordConcat '}' body chapter {
        $$ = newAST( newElement(NULL, $3, Tchapter), newAST($5, $6) );
     }
-    | CHAPTER '{' TEXT '}' { $$ = newElement(NULL, $3, Tchapter); }
+    | CHAPTER '{' wordConcat '}' { $$ = newElement(NULL, $3, Tchapter); }
 ;
 
 body: text
@@ -68,10 +69,14 @@ body: text
     | stylizedText body { $$ = newAST($1, $2); }
 ;
 
-text: PARAGRAPH '{' TEXT '}' { $$ = newElement(NULL, $3, Tparagraph); }
+text: PARAGRAPH '{' wordConcat '}' { $$ = newElement(NULL, $3, Tparagraph); }
 ;
 
-stylizedText: BOLD '{' TEXT '}' { $$ = newElement(NULL, $3, Tbold); }
-    | UNDERLINE '{' TEXT '}' { $$ = newElement(NULL, $3, Tunderline); }
-    | ITALIC '{' TEXT '}' { $$ = newElement(NULL, $3, Titalic); }
+stylizedText: BOLD '{' wordConcat '}' { $$ = newElement(NULL, $3, Tbold); }
+    | UNDERLINE '{' wordConcat '}' { $$ = newElement(NULL, $3, Tunderline); }
+    | ITALIC '{' wordConcat '}' { $$ = newElement(NULL, $3, Titalic); }
+;
+
+wordConcat: WORD wordConcat { strcat($1, " "); strcat($1, $2); $$ = $1; }
+    | WORD
 ;

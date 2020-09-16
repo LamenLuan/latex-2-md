@@ -24,9 +24,7 @@ ALPHANUM [a-zA-Z0-9]+
 "\\underline" { return UNDERLINE; }
 "\\it" { return ITALIC; }
 
-({ALPHANUM}" ")*{ALPHANUM} {
-    yylval.c = strdup(yytext); return TEXT;
-}
+{ALPHANUM} { yylval.c = strdup(yytext); return WORD; }
 
 \n {}
 "//".*
