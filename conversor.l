@@ -19,10 +19,16 @@ ALPHANUM [a-zA-Z0-9]+
 "\\maketitle" { return MAKETITLE; }
 "\\end{document}" { return END; }
 "\\chapter" { return CHAPTER; }
+"\\section" { return SECTION; }
 "\\paragraph" { return PARAGRAPH; }
 "\\bf" { return BOLD; }
 "\\underline" { return UNDERLINE; }
 "\\it" { return ITALIC; }
+"\\begin{itemize}" { return BEGINITEMLIST; }
+"\\end{itemize}" { return ENDITEMLIST; }
+"\\begin{enumerate}" { return BEGINENUMLIST; }
+"\\end{enumerate}" { return ENDENUMLIST; }
+"\\item" { return ITEM; }
 
 {ALPHANUM} { yylval.c = strdup(yytext); return WORD; }
 

@@ -24,10 +24,14 @@ typedef enum nodeType
     Ttitle,
     Tauthor,
     Tchapter,
+    Tsection,
     Tparagraph,
     Tbold,
     Tunderline,
-    Titalic
+    Titalic,
+    Titem,
+    Tenum,
+    Tbreak
 }TnodeType;
 
 struct ast
@@ -35,6 +39,7 @@ struct ast
     enum nodeType nodeType;
     struct wordList *list;
     struct ast *right, *left;
+    unsigned tabOrder;
 };
 
 struct wordList *newWordList(char *, struct wordList *);
@@ -46,5 +51,5 @@ struct ast *newAST(struct ast *, struct ast *);
 struct ast *newElement(struct wordList *, char *, TnodeType);
 
 // To open the output and call a recursive function
-void callMakeOutput(struct ast *head);
-void makeOutput(struct ast *, FILE *);
+void callMakeOutput(struct ast *);
+void makeOutput(struct ast *, FILE *, unsigned);
