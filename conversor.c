@@ -60,19 +60,23 @@ void callMakeOutput(struct ast *head)
 {
     FILE *output = fopen("output.md", "w");
 
-    makeOutput(head, output, 0);
+    makeOutput(head, output, 0, 0);
 
     fclose(output);
 }
 
-void makeOutput(struct ast *head, FILE *output, unsigned sections)
+void makeOutput
+(
+    struct ast *head, FILE *output, unsigned *sections,
+    unsigned *subSections
+)
 {
     switch (head->nodeType)
     {
         case Tast:
         {
-            makeOutput(head->left, output, sections);
-            makeOutput(head->right, output, sections);
+            makeOutput(head->left, output, sections, subSections);
+            makeOutput(head->right, output, sections, subSections);
         } break;
 
         case Tclass:
@@ -138,11 +142,11 @@ void makeOutput(struct ast *head, FILE *output, unsigned sections)
             fprintf(output, " *%s*", head->list->word);
             break;
 
-        case Tsection:
-            fprintf
-            (   
-                output, "  \n##%u %s", ++sections, head->list->word
-            );
+        case Tsection: (output, "  \n## %s", head->list->word);
+            break;
+
+        case TsubSection:
+            fprintf(output, "  \n### %s", head->list->word);
             break;
 
         case Titem: {

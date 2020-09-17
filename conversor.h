@@ -25,6 +25,7 @@ typedef enum nodeType
     Tauthor,
     Tchapter,
     Tsection,
+    TsubSection,
     Tparagraph,
     Tbold,
     Tunderline,
@@ -52,4 +53,4 @@ struct ast *newElement(struct wordList *, char *, TnodeType);
 
 // To open the output and call a recursive function
 void callMakeOutput(struct ast *);
-void makeOutput(struct ast *, FILE *, unsigned);
+void makeOutput(struct ast *, FILE *, unsigned *, unsigned *);

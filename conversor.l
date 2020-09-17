@@ -20,6 +20,7 @@ ALPHANUM [a-zA-Z0-9]+
 "\\end{document}" { return END; }
 "\\chapter" { return CHAPTER; }
 "\\section" { return SECTION; }
+"\\subsection" { return SUBSECTION; }
 "\\paragraph" { return PARAGRAPH; }
 "\\bf" { return BOLD; }
 "\\underline" { return UNDERLINE; }

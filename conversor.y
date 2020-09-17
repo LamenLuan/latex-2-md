@@ -9,12 +9,12 @@
 
 %token <c> WORD
 %token CLASS PACKAGE TITLE AUTHOR START MAKETITLE END CHAPTER
-PARAGRAPH BOLD UNDERLINE ITALIC SECTION BEGINITEMLIST ENDITEMLIST ITEM
-BEGINENUMLIST ENDENUMLIST
+PARAGRAPH BOLD UNDERLINE ITALIC SECTION SUBSECTION BEGINITEMLIST 
+ENDITEMLIST ITEM BEGINENUMLIST ENDENUMLIST
 
 %type <a> configuration identification documentClass usePackage title 
-author main bodyList chapter body text stylizedText lists itemList 
-item enumList enum
+author main bodyList chapter section subSection body text stylizedText
+lists itemList item enumList enum
 %type <l> wordList
 %type <c> wordConcat
 
@@ -58,13 +58,26 @@ wordList: WORD ',' wordList { $$ = newWordList($1, $3); }
 main: START MAKETITLE bodyList END { $$ = $3; }
 ;
 
-bodyList: chapter
+bodyList: chapter section subSection bodyList
+    | body
 ;
 
 chapter: CHAPTER '{' wordConcat '}' body chapter {
        $$ = newAST( newElement(NULL, $3, Tchapter), newAST($5, $6) );
     }
     | CHAPTER '{' wordConcat '}' { $$ = newElement(NULL, $3, Tchapter); }
+;
+
+section: SECTION '{' wordConcat '}' body section {
+       $$ = newAST( newElement(NULL, $3, Tsection), newAST($5, $6) );
+    }
+    | body
+;
+
+subSection: SUBSECTION '{' wordConcat '}' body subSection {
+       $$ = newAST( newElement(NULL, $3, Tsection), newAST($5, $6) );
+    }
+    | body
 ;
 
 body: text
