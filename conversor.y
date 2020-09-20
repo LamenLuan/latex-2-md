@@ -3,20 +3,18 @@
 %}
 %union {
     char *c;
-    struct wordList *l;
     struct ast *a;
 }
 
-%token <c> WORD
-%token CLASS PACKAGE TITLE AUTHOR START MAKETITLE END CHAPTER
-PARAGRAPH BOLD UNDERLINE ITALIC SECTION SUBSECTION BEGINITEMLIST 
-ENDITEMLIST ITEM BEGINENUMLIST ENDENUMLIST
+%token <c> WORD ACCENTUATION
+%token CLASS PACKAGE TITLE AUTHOR START MAKETITLE END 
+CHAPTER PARAGRAPH BOLD UNDERLINE ITALIC SECTION SUBSECTION 
+BEGINITEMLIST ENDITEMLIST ITEM BEGINENUMLIST ENDENUMLIST
 
 %type <a> configuration identification documentClass usePackage title 
 author main bodyList chapter section subSection body text stylizedText
 lists itemList item enumList enum
-%type <l> wordList
-%type <c> wordConcat
+%type <c> wordList
 
 %start latexDocument
 %%
@@ -33,49 +31,59 @@ identification: title author { $$ = newAST($1, $2); }
     | title
 ;
 
-title: TITLE '{' wordConcat '}' { $$ = newElement(NULL, $3, Ttitle); }
+title: TITLE '{' wordList '}' { $$ = newElement($3, NULL, Ttitle); }
 ;
 
-author: AUTHOR '{' wordConcat '}' { $$ = newElement(NULL, $3, Tauthor); }
+author: AUTHOR '{' wordList '}' { $$ = newElement($3, NULL, Tauthor); }
 ;
 
 documentClass: CLASS '[' wordList ']' '{' WORD '}' {
-        $$ = newElement($3, $6, Tclass);
+        $$ = newElement($6, $3, Tclass);
     }
-    | CLASS '{' WORD '}' { $$ = newElement(NULL, $3, Tclass); }
+    | CLASS '{' WORD '}' { $$ = newElement($3, NULL, Tclass); }
 ;
 
 usePackage: PACKAGE '[' wordList ']' '{' WORD '}' {
-    $$ = newElement($3, $6, Tpackage);
+    $$ = newElement($6, $3, Tpackage);
 }
-    | PACKAGE '{' WORD '}' { $$ = newElement(NULL, $3, Tpackage); }
-;
-
-wordList: WORD ',' wordList { $$ = newWordList($1, $3); }
-    | WORD { $$ = newWordList($1, NULL); }
+    | PACKAGE '{' WORD '}' { $$ = newElement($3, NULL, Tpackage); }
 ;
 
 main: START MAKETITLE bodyList END { $$ = $3; }
 ;
 
-bodyList: chapter section subSection bodyList
+bodyList: chapter
     | body
 ;
 
-chapter: CHAPTER '{' wordConcat '}' body chapter {
-       $$ = newAST( newElement(NULL, $3, Tchapter), newAST($5, $6) );
+chapter: CHAPTER '{' wordList '}' section chapter {
+        $$ = newAST(
+            newElement($3, NULL, Tchapter), newAST($5, $6) 
+        );
     }
-    | CHAPTER '{' wordConcat '}' { $$ = newElement(NULL, $3, Tchapter); }
+    | CHAPTER '{' wordList '}' section {
+        $$ = newAST( newElement($3, NULL, Tchapter), $5 );
+    }
 ;
 
-section: SECTION '{' wordConcat '}' body section {
-       $$ = newAST( newElement(NULL, $3, Tsection), newAST($5, $6) );
+section: SECTION '{' wordList '}' subSection section {
+        $$ = newAST(
+           newElement($3, NULL, Tsection), newAST($5, $6) 
+        );
+    }
+    | SECTION '{' wordList '}' subSection {
+        $$ = newAST( newElement($3, NULL, Tsection), $5 );
     }
     | body
 ;
 
-subSection: SUBSECTION '{' wordConcat '}' body subSection {
-       $$ = newAST( newElement(NULL, $3, Tsection), newAST($5, $6) );
+subSection: SUBSECTION '{' wordList '}' body subSection {
+        $$ = newAST(
+            newElement($3, NULL, TsubSection), newAST($5, $6) 
+        );
+    }
+    | SUBSECTION '{' wordList '}' body {
+        $$ = newAST( newElement($3, NULL, TsubSection), $5 );
     }
     | body
 ;
@@ -86,19 +94,19 @@ body: text
     | lists body { $$ = newAST($1, $2); }
 ;
 
-text: PARAGRAPH '{' wordConcat '}' { $$ = newElement(NULL, $3, Tparagraph); }
+text: PARAGRAPH '{' wordList '}' { $$ = newElement($3, NULL, Tparagraph); }
 ;
 
-stylizedText: BOLD '{' wordConcat '}' { $$ = newElement(NULL, $3, Tbold); }
-    | UNDERLINE '{' wordConcat '}' { $$ = newElement(NULL, $3, Tunderline); }
-    | ITALIC '{' wordConcat '}' { $$ = newElement(NULL, $3, Titalic); }
+stylizedText: BOLD '{' wordList '}' { $$ = newElement($3, NULL, Tbold); }
+    | UNDERLINE '{' wordList '}' { $$ = newElement($3, NULL, Tunderline); }
+    | ITALIC '{' wordList '}' { $$ = newElement($3, NULL, Titalic); }
 ;
 
 lists: itemList {
-        $$ = newAST( $1, newElement(NULL, "\n", Tbreak) );
+        $$ = newAST( $1, newElement("\n", NULL, Tbreak) );
     }
     | enumList {
-        $$ = newAST( $1, newElement(NULL, "\n", Tbreak) );
+        $$ = newAST( $1, newElement("\n", NULL, Tbreak) );
     }
 ;
 
@@ -108,22 +116,22 @@ itemList: BEGINITEMLIST item ENDITEMLIST { $$ = $2; }
 enumList: BEGINENUMLIST enum ENDENUMLIST { $$ = $2; }
 ;
 
-item: ITEM '{' wordConcat '}' { $$ = newElement(NULL, $3, Titem); }
-    | ITEM '{' wordConcat '}' item {
-        $$ = newAST(newElement(NULL, $3, Titem), $5);
+item: ITEM '{' wordList '}' { $$ = newElement($3, NULL, Titem); }
+    | ITEM '{' wordList '}' item {
+        $$ = newAST(newElement($3, NULL, Titem), $5);
     }
     | lists
 ;
 
-enum: ITEM '{' wordConcat '}' { $$ = newElement(NULL, $3, Tenum); }
-    | ITEM '{' wordConcat '}' enum {
-        $$ = newAST(newElement(NULL, $3, Tenum), $5);
+enum: ITEM '{' wordList '}' { $$ = newElement($3, NULL, Tenum); }
+    | ITEM '{' wordList '}' enum {
+        $$ = newAST(newElement($3, NULL, Tenum), $5);
     }
     | lists
 ;
 
-wordConcat: WORD wordConcat {
-        strcat($1, " "); strcat($1, $2); $$ = $1;
-    }
+wordList: WORD wordList { strcat($1, $2); $$ = $1; }
+    | ACCENTUATION wordList { strcat($1, $2); $$ = $1; }
+    | ACCENTUATION
     | WORD
 ;

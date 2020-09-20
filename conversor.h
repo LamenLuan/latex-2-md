@@ -49,7 +49,7 @@ struct wordList *newWordList(char *, struct wordList *);
 struct ast *newAST(struct ast *, struct ast *);
 
 // Leaf nodes
-struct ast *newElement(struct wordList *, char *, TnodeType);
+struct ast *newElement(char *, char *, TnodeType);
 
 // To open the output and call a recursive function
 void callMakeOutput(struct ast *);

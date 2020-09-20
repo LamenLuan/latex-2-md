@@ -43,14 +43,14 @@ struct ast *newAST(struct ast *left, struct ast *right)
     return p;
 }
 
-struct ast *newElement
-(
-    struct wordList *list, char *name, TnodeType type
-)
+struct ast *newElement(char *name, char *next, TnodeType type)
 {
     struct ast *p = newAST(NULL, NULL);
 
-    p->list = newWordList(name, list);
+    p->list = next
+        ? newWordList( name, newWordList(next, NULL) )
+        : newWordList(name, NULL);
+
     p->nodeType = type;
 
     return p;
@@ -84,16 +84,7 @@ void makeOutput
             struct wordList *list = head->list;
         
             fprintf(output, "Class: %s", list->word);
-            if(list->next)
-            {
-                fprintf(output, "[");
-                while (list = list->next)
-                {
-                    fprintf(output, "%s", list->word);
-                    if(list->next) fprintf(output, ", ");
-                }
-                fprintf(output, "]");
-            }
+            if(list = list->next) fprintf(output, "[%s]", list->word);
         } break;
 
         case Tpackage:
@@ -101,16 +92,8 @@ void makeOutput
             struct wordList *list = head->list;
             
             fprintf(output, "  \nPackage: %s", list->word);
-            if(list->next)
-            {
-                fprintf(output, "[");
-                while (list = list->next)
-                {
-                    fprintf(output, "%s", list->word);
-                    if(list->next) fprintf(output, ", ");
-                }
-                fprintf(output, "]");
-            }
+            if(list = list->next) fprintf(output, "[%s]", list->word);
+
             fprintf(output, "  \n***");
         } break;
 
@@ -123,7 +106,7 @@ void makeOutput
             break;
 
         case Tchapter:
-            fprintf(output, "  \n#### %s", head->list->word);
+            fprintf(output, "  \n## %s", head->list->word);
             break;
 
         case Tparagraph:
@@ -142,11 +125,12 @@ void makeOutput
             fprintf(output, " *%s*", head->list->word);
             break;
 
-        case Tsection: (output, "  \n## %s", head->list->word);
+        case Tsection:
+            fprintf(output, "  \n### %s", head->list->word);
             break;
 
         case TsubSection:
-            fprintf(output, "  \n### %s", head->list->word);
+            fprintf(output, "  \n#### %s", head->list->word);
             break;
 
         case Titem: {

@@ -8,8 +8,7 @@ ALPHANUM [a-zA-Z0-9]+
 "[" |
 "]" |
 "{" |
-"}" |
-"," { return yytext[0]; }
+"}" { return yytext[0]; }
 
 "\\documentclass" { return CLASS; }
 "\\usepackage" { return PACKAGE; }
@@ -30,6 +29,8 @@ ALPHANUM [a-zA-Z0-9]+
 "\\begin{enumerate}" { return BEGINENUMLIST; }
 "\\end{enumerate}" { return ENDENUMLIST; }
 "\\item" { return ITEM; }
+
+","|"."|" " { yylval.c = strdup(yytext); return ACCENTUATION;  }
 
 {ALPHANUM} { yylval.c = strdup(yytext); return WORD; }
 
