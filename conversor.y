@@ -74,6 +74,7 @@ section: SECTION '{' wordList '}' subSection section {
     | SECTION '{' wordList '}' subSection {
         $$ = newAST( newElement($3, NULL, Tsection), $5 );
     }
+    | body section { $$ = newAST($1, $2); }
     | body
 ;
 
@@ -85,6 +86,7 @@ subSection: SUBSECTION '{' wordList '}' body subSection {
     | SUBSECTION '{' wordList '}' body {
         $$ = newAST( newElement($3, NULL, TsubSection), $5 );
     }
+    | body subSection { $$ = newAST($1, $2); }
     | body
 ;
 
