@@ -1,5 +1,7 @@
 #include "conversor.h"
 
+unsigned chapterQuant = 0, sectionQuant = 0, subSectionQuant = 0;
+
 void yyerror(char *s, ...)
 {
     va_list ap;
@@ -106,8 +108,14 @@ void makeOutput
             break;
 
         case Tchapter:
-            fprintf(output, "  \n## %s", head->list->word);
-            break;
+            {
+                fprintf
+                (
+                    output, "  \n## %u. %s", ++chapterQuant,
+                    head->list->word
+                );
+                sectionQuant = subSectionQuant = 0;
+            } break;
 
         case Tparagraph:
             fprintf(output, "  \n%s", head->list->word);
@@ -126,11 +134,21 @@ void makeOutput
             break;
 
         case Tsection:
-            fprintf(output, "  \n### %s", head->list->word);
-            break;
+            {
+                fprintf
+                (
+                    output, "  \n### %u.%u. %s", chapterQuant,
+                    ++sectionQuant, head->list->word
+                );
+                subSectionQuant = 0;
+            } break;
 
         case TsubSection:
-            fprintf(output, "  \n#### %s", head->list->word);
+            fprintf
+            (
+                output, "  \n#### %u.%u.%u. %s", chapterQuant,
+                sectionQuant, ++subSectionQuant, head->list->word
+            );
             break;
 
         case Titem: {

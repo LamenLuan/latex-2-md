@@ -3,10 +3,13 @@ Package: inputenc[utf8]
 ***  
 # Title  
 ### Luan Leme  
-## Introduction  
+## 1. Introduction  
 This is introduction.  
-## Methodology  
-### Materials  
+## 2. Methodology  
+### 2.1. Materials  
 This is materials.  
-### Methods  
-This is methods.
+### 2.2. Methods  
+This is methods.  
+## 3. Results  
+### 3.1. Results obtained  
+This is results.

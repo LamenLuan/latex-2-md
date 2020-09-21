@@ -10,6 +10,8 @@ extern int yylex();
 extern int yyparse();
 void yyerror(char *s, ...);
 
+unsigned chapterQuant, sectionQuant, subSectionQuant;
+
 struct wordList
 {
     char *word;
