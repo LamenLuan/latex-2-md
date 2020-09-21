@@ -13,12 +13,6 @@ void yyerror(char *s, ...);
 unsigned chapterQuant, sectionQuant, subSectionQuant;
 unsigned listLevel;
 
-struct wordList
-{
-    char *word;
-    struct wordList *next;
-};
-
 typedef enum nodeType
 {
     Tast,
@@ -43,12 +37,10 @@ typedef enum nodeType
 struct ast
 {
     enum nodeType nodeType;
-    struct wordList *list;
+    char *text, *secondaryText;
     struct ast *right, *left;
     unsigned tabOrder;
 };
-
-struct wordList *newWordList(char *, struct wordList *);
 
 // Non leaf nodes
 struct ast *newAST(struct ast *, struct ast *);
@@ -59,3 +51,5 @@ struct ast *newElement(char *, char *, TnodeType);
 // To open the output and call a recursive function
 void callMakeOutput(struct ast *);
 void makeOutput(struct ast *, FILE *, unsigned *, unsigned *);
+
+void destroyAST(struct ast *);

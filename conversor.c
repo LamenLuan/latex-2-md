@@ -13,22 +13,6 @@ void yyerror(char *s, ...)
     fprintf(stderr, "\n");
 }
 
-struct wordList *newWordList(char *word, struct wordList *next)
-{
-    struct wordList *p = malloc( sizeof(struct wordList) );
-
-    if(!p)
-    {
-        yyerror("Sem espaco!");
-        exit(0);
-    }
-
-    p->word = strdup(word);
-    p->next = next;
-
-    return p;
-}
-
 struct ast *newAST(struct ast *left, struct ast *right)
 {
     struct ast *p = malloc( sizeof(struct ast) );
@@ -50,9 +34,8 @@ struct ast *newElement(char *name, char *next, TnodeType type)
 {
     struct ast *p = newAST(NULL, NULL);
 
-    p->list = next
-        ? newWordList( name, newWordList(next, NULL) )
-        : newWordList(name, NULL);
+    p->text = name;
+    p->secondaryText = next;
 
     p->nodeType = type;
 
@@ -64,6 +47,8 @@ void callMakeOutput(struct ast *head)
     FILE *output = fopen("output.md", "w");
 
     makeOutput(head, output, 0, 0);
+
+    destroyAST(head);
 
     fclose(output);
 }
@@ -84,28 +69,25 @@ void makeOutput
 
         case Tclass:
         {
-            struct wordList *list = head->list;
-        
-            fprintf(output, "Class: %s", list->word);
-            if(list = list->next) fprintf(output, "[%s]", list->word);
+            fprintf(output, "Class: %s", head->text);
+            if(head->secondaryText)
+                fprintf(output, "[%s]", head->secondaryText);
         } break;
 
         case Tpackage:
         {
-            struct wordList *list = head->list;
-            
-            fprintf(output, "  \nPackage: %s", list->word);
-            if(list = list->next) fprintf(output, "[%s]", list->word);
-
+            fprintf(output, "  \nPackage: %s", head->text);
+            if(head->secondaryText)
+                fprintf(output, "[%s]", head->secondaryText);
             fprintf(output, "  \n***");
         } break;
 
         case Ttitle:
-            fprintf(output, "  \n# %s", head->list->word);
+            fprintf(output, "  \n# %s", head->text);
             break;
 
         case Tauthor:
-            fprintf(output, "  \n### %s", head->list->word);
+            fprintf(output, "  \n### %s", head->text);
             break;
 
         case Tchapter:
@@ -113,25 +95,25 @@ void makeOutput
                 fprintf
                 (
                     output, "  \n## %u. %s", ++chapterQuant,
-                    head->list->word
+                    head->text
                 );
                 sectionQuant = subSectionQuant = 0;
             } break;
 
         case Tparagraph:
-            fprintf(output, "  \n%s", head->list->word);
+            fprintf(output, "  \n%s", head->text);
             break;
 
         case Tbold:
-            fprintf(output, " **%s**", head->list->word);
+            fprintf(output, " **%s**", head->text);
             break;
 
         case Tunderline:
-            fprintf(output, " <u>%s</u>", head->list->word);
+            fprintf(output, " <u>%s</u>", head->text);
             break;
 
         case Titalic:
-            fprintf(output, " *%s*", head->list->word);
+            fprintf(output, " *%s*", head->text);
             break;
 
         case Tsection:
@@ -139,7 +121,7 @@ void makeOutput
                 fprintf
                 (
                     output, "  \n### %u.%u. %s", chapterQuant,
-                    ++sectionQuant, head->list->word
+                    ++sectionQuant, head->text
                 );
                 subSectionQuant = 0;
             } break;
@@ -148,7 +130,7 @@ void makeOutput
             fprintf
             (
                 output, "  \n#### %u.%u.%u. %s", chapterQuant,
-                sectionQuant, ++subSectionQuant, head->list->word
+                sectionQuant, ++subSectionQuant, head->text
             );
             break;
 
@@ -158,7 +140,7 @@ void makeOutput
             {
                 fprintf(output, "  ");
             }
-            fprintf(output, "* %s", head->list->word);
+            fprintf(output, "* %s", head->text);
         } break;
 
         case Tenum: {
@@ -167,11 +149,11 @@ void makeOutput
             {
                 fprintf(output, "  ");
             }
-            fprintf(output, "1. %s", head->list->word);
+            fprintf(output, "1. %s", head->text);
         } break;
 
         case Tbreak:
-            fprintf(output, "%s", head->list->word);
+            fprintf(output, "%s", head->text);
             break;
 
         case TlistBegin: ++listLevel; break;
@@ -179,6 +161,23 @@ void makeOutput
         case TlistEnd: --listLevel; break;
 
         default: break;
+    }
+}
+
+void destroyAST(struct ast *p)
+{
+    if(p) {
+        if(p->nodeType == Tparagraph)
+        {
+            if(p->secondaryText) free(p->secondaryText);
+            free(p->text);
+        }
+        else if(p->nodeType == Tast)
+        {
+            destroyAST(p->left);
+            destroyAST(p->right);
+        }
+        free(p);
     }
 }
 
