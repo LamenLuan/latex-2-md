@@ -90,10 +90,12 @@ subSection: SUBSECTION '{' wordList '}' body subSection {
     | body
 ;
 
-body: text
-    | text body { $$ = newAST($1, $2); }
+body: text body { $$ = newAST($1, $2); }
     | stylizedText body { $$ = newAST($1, $2); }
     | lists body { $$ = newAST($1, $2); }
+    | text
+    | stylizedText
+    | lists
 ;
 
 text: PARAGRAPH '{' wordList '}' { $$ = newElement($3, NULL, Tparagraph); }
