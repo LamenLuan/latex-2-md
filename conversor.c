@@ -1,6 +1,7 @@
 #include "conversor.h"
 
 unsigned chapterQuant = 0, sectionQuant = 0, subSectionQuant = 0;
+unsigned listLevel = 0;
 
 void yyerror(char *s, ...)
 {
@@ -152,16 +153,30 @@ void makeOutput
             break;
 
         case Titem: {
-            fprintf(output, "\n* %s", head->list->word);
+            fprintf(output, "\n");
+            for (size_t i = 1; i < listLevel; i++)
+            {
+                fprintf(output, "  ");
+            }
+            fprintf(output, "* %s", head->list->word);
         } break;
 
         case Tenum: {
-            fprintf(output, "\n1. %s", head->list->word);
+            fprintf(output, "\n");
+            for (size_t i = 1; i < listLevel; i++)
+            {
+                fprintf(output, "  ");
+            }
+            fprintf(output, "1. %s", head->list->word);
         } break;
 
         case Tbreak:
             fprintf(output, "%s", head->list->word);
             break;
+
+        case TlistBegin: ++listLevel; break;
+
+        case TlistEnd: --listLevel; break;
 
         default: break;
     }

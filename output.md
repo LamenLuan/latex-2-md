@@ -3,8 +3,10 @@ Package: inputenc[utf8]
 ***  
 # Title  
 ### Luan Leme
+1. Item
+1. Item
+1. Item
+  1. Item
+1. Item
+1. Item
 * Item
-* Item
-* Item
-* Item
-

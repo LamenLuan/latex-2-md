@@ -106,24 +106,33 @@ stylizedText: BOLD '{' wordList '}' { $$ = newElement($3, NULL, Tbold); }
     | ITALIC '{' wordList '}' { $$ = newElement($3, NULL, Titalic); }
 ;
 
-lists: itemList {
-        $$ = newAST( $1, newElement("\n", NULL, Tbreak) );
-    }
-    | enumList {
-        $$ = newAST( $1, newElement("\n", NULL, Tbreak) );
-    }
+lists: itemList
+    | enumList
 ;
 
-itemList: BEGINITEMLIST item ENDITEMLIST { $$ = $2; }
+itemList: BEGINITEMLIST item ENDITEMLIST {
+    $$ = newAST
+    (
+        newElement("", NULL, TlistBegin),
+        newAST( $2, newElement("", NULL, TlistEnd) )
+    ); 
+}
 ;
 
-enumList: BEGINENUMLIST enum ENDENUMLIST { $$ = $2; }
+enumList: BEGINENUMLIST enum ENDENUMLIST {
+    $$ = newAST
+    (
+        newElement("", NULL, TlistBegin),
+        newAST( $2, newElement("", NULL, TlistEnd) )
+    ); 
+}
 ;
 
 item: ITEM '{' wordList '}' { $$ = newElement($3, NULL, Titem); }
     | ITEM '{' wordList '}' item {
         $$ = newAST(newElement($3, NULL, Titem), $5);
     }
+    | lists item { $$ = newAST($1, $2); }
     | lists
 ;
 
@@ -131,6 +140,7 @@ enum: ITEM '{' wordList '}' { $$ = newElement($3, NULL, Tenum); }
     | ITEM '{' wordList '}' enum {
         $$ = newAST(newElement($3, NULL, Tenum), $5);
     }
+    | lists enum { $$ = newAST($1, $2); }
     | lists
 ;
 

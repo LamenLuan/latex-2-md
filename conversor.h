@@ -11,6 +11,7 @@ extern int yyparse();
 void yyerror(char *s, ...);
 
 unsigned chapterQuant, sectionQuant, subSectionQuant;
+unsigned listLevel;
 
 struct wordList
 {
@@ -34,7 +35,9 @@ typedef enum nodeType
     Titalic,
     Titem,
     Tenum,
-    Tbreak
+    Tbreak,
+    TlistBegin,
+    TlistEnd
 }TnodeType;
 
 struct ast
