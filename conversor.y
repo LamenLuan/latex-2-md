@@ -113,8 +113,8 @@ lists: itemList
 itemList: BEGINITEMLIST item ENDITEMLIST {
     $$ = newAST
     (
-        newElement("", NULL, TlistBegin),
-        newAST( $2, newElement("", NULL, TlistEnd) )
+        newElement(NULL, NULL, TlistBegin),
+        newAST( $2, newElement(NULL, NULL, TlistEnd) )
     ); 
 }
 ;
@@ -122,8 +122,8 @@ itemList: BEGINITEMLIST item ENDITEMLIST {
 enumList: BEGINENUMLIST enum ENDENUMLIST {
     $$ = newAST
     (
-        newElement("", NULL, TlistBegin),
-        newAST( $2, newElement("", NULL, TlistEnd) )
+        newElement(NULL, NULL, TlistBegin),
+        newAST( $2, newElement(NULL, NULL, TlistEnd) )
     ); 
 }
 ;

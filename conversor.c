@@ -167,12 +167,10 @@ void makeOutput
 void destroyAST(struct ast *p)
 {
     if(p) {
-        if(p->nodeType == Tparagraph)
-        {
-            if(p->secondaryText) free(p->secondaryText);
-            free(p->text);
-        }
-        else if(p->nodeType == Tast)
+        if(p->secondaryText) free(p->secondaryText);
+        if(p->text) free(p->text);
+
+        if(p->nodeType == Tast)
         {
             destroyAST(p->left);
             destroyAST(p->right);
