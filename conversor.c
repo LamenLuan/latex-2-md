@@ -158,7 +158,11 @@ void makeOutput
 
         case TlistBegin: ++listLevel; break;
 
-        case TlistEnd: --listLevel; break;
+        case TlistEnd:
+        {
+            --listLevel;
+            if(!listLevel) fprintf(output, "\n");
+        } break;
 
         default: break;
     }
