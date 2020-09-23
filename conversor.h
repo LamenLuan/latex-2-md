@@ -39,7 +39,6 @@ struct ast
     enum nodeType nodeType;
     char *text, *secondaryText;
     struct ast *right, *left;
-    unsigned tabOrder;
 };
 
 // Non leaf nodes
