@@ -27,16 +27,6 @@ configuration: documentClass usePackage { $$ = newAST($1, $2); }
     | documentClass
 ;
 
-identification: title author { $$ = newAST($1, $2); }
-    | title
-;
-
-title: TITLE '{' wordList '}' { $$ = newElement($3, NULL, Ttitle); }
-;
-
-author: AUTHOR '{' wordList '}' { $$ = newElement($3, NULL, Tauthor); }
-;
-
 documentClass: CLASS '[' wordList ']' '{' WORD '}' {
         $$ = newElement($6, $3, Tclass);
     }
@@ -47,6 +37,16 @@ usePackage: PACKAGE '[' wordList ']' '{' WORD '}' {
     $$ = newElement($6, $3, Tpackage);
 }
     | PACKAGE '{' WORD '}' { $$ = newElement($3, NULL, Tpackage); }
+;
+
+identification: title author { $$ = newAST($1, $2); }
+    | title
+;
+
+title: TITLE '{' wordList '}' { $$ = newElement($3, NULL, Ttitle); }
+;
+
+author: AUTHOR '{' wordList '}' { $$ = newElement($3, NULL, Tauthor); }
 ;
 
 main: START MAKETITLE bodyList END { $$ = $3; }
